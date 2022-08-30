@@ -30,6 +30,8 @@ public interface ApplicationStartup {
 	/**
 	 * Default "no op" {@code ApplicationStartup} implementation.
 	 * <p>This variant is designed for minimal overhead and does not record data.
+	 *
+	 * 静态内部类单例
 	 */
 	ApplicationStartup DEFAULT = new DefaultApplicationStartup();
 

@@ -223,6 +223,9 @@ public @interface Bean {
 	 * {@code @Bean("customBeanName")}.
 	 * @since 4.3.3
 	 * @see #name
+	 *  用来指定bean的名称，当声明bean的名称时没有指定属性名，将会使用该属性
+	 *  例如：@Bean("myCustomer")
+	 *  AliasFor表示的是name和value互为别名，指定name或者value都可以
 	 */
 	@AliasFor("name")
 	String[] value() default {};
@@ -234,6 +237,8 @@ public @interface Bean {
 	 * <p>The bean name and aliases may also be configured via the {@link #value}
 	 * attribute if no other attributes are declared.
 	 * @see #value
+	 *
+	 * 用来表示bean的名称，可以在@Bean中显示使用该属性指定bean的名称
 	 */
 	@AliasFor("value")
 	String[] name() default {};
@@ -243,6 +248,8 @@ public @interface Bean {
 	 * <p>Default is {@code true}; set this to {@code false} for internal delegates
 	 * that are not meant to get in the way of beans of the same type in other places.
 	 * @since 5.1
+	 *
+	 * 表示这个bean是否可以作为其他bean的初始化的使用
 	 */
 	boolean autowireCandidate() default true;
 
@@ -253,6 +260,8 @@ public @interface Bean {
 	 * <p>The default value is {@code ""}, indicating no init method to be called.
 	 * @see org.springframework.beans.factory.InitializingBean
 	 * @see org.springframework.context.ConfigurableApplicationContext#refresh()
+	 *
+	 * 指定初始化之前的方法
 	 */
 	String initMethod() default "";
 
@@ -282,6 +291,8 @@ public @interface Bean {
 	 * other scope.
 	 * @see org.springframework.beans.factory.DisposableBean
 	 * @see org.springframework.context.ConfigurableApplicationContext#close()
+	 *
+	 * 指定bean的自动销毁方法，在bean的生命周期完成之后【即：调用容器的close方法时】，同样不受修饰符的限制
 	 */
 	String destroyMethod() default AbstractBeanDefinition.INFER_METHOD;
 

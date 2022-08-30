@@ -55,6 +55,10 @@ import org.springframework.core.type.filter.TypeFilter;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
+/*
+ 表示在使用@ComponentScans时，可以再指定多个@ComponentScan，
+ 表示指定多个包扫描路径
+*/
 @Repeatable(ComponentScans.class)
 public @interface ComponentScan {
 

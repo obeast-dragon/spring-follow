@@ -106,6 +106,8 @@ public @interface Autowired {
 	/**
 	 * Declares whether the annotated dependency is required.
 	 * <p>Defaults to {@code true}.
+	 *
+	 * 使用required注解标识当没有找到bean时，忽略该Bean的自动装配，不会抛异常
 	 */
 	boolean required() default true;
 

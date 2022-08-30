@@ -132,6 +132,8 @@ import org.springframework.util.ReflectionUtils;
  * @see org.springframework.context.event.ApplicationEventMulticaster
  * @see org.springframework.context.ApplicationListener
  * @see org.springframework.context.MessageSource
+ *
+ * 容器的二级抽象
  */
 public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		implements ConfigurableApplicationContext {
@@ -451,6 +453,14 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		this.applicationStartup = applicationStartup;
 	}
 
+
+	/**
+	 *  Application startup metrics.
+	 *  private ApplicationStartup applicationStartup = ApplicationStartup.DEFAULT;
+	 *
+	 *  详情看---------------->DefaultApplicationStartup
+	 *  调用start()方法创建单例
+	 * */
 	@Override
 	public ApplicationStartup getApplicationStartup() {
 		return this.applicationStartup;
@@ -552,46 +562,63 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
+
+		//同步刷新和销毁的监控器
 		synchronized (this.startupShutdownMonitor) {
+			//调用数据记录器
 			StartupStep contextRefresh = this.applicationStartup.start("spring.context.refresh");
 
 			// Prepare this context for refreshing.
+			//准备此上下文以进行刷新、设置其启动日期和活动标志以及执行任何属性源的初始化。
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
+			//准备此上下文以进行刷新、设置其启动日期和活动标志以及执行任何属性源的初始化。
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
+			//配置工厂的标准上下文特征，例如上下文的 ClassLoader 和后处理器。
 			prepareBeanFactory(beanFactory);
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
+				// 在标准初始化之后修改应用程序上下文的内部 bean 工厂。所有 bean 定义都将被加载，但还没有 bean 被实例化。这允许在某些 ApplicationContext 实现中注册特殊的 BeanPostProcessors 等。
 				postProcessBeanFactory(beanFactory);
 
 				StartupStep beanPostProcess = this.applicationStartup.start("spring.context.beans.post-process");
 				// Invoke factory processors registered as beans in the context.
+				//在标准初始化之后修改应用程序上下文的内部 bean 工厂。所有 bean 定义都将被加载，但还没有 bean 被实例化。这允许在某些 ApplicationContext 实现中注册特殊的 BeanPostProcessors 等。
+				// 反射 工厂处理器 并注册到容器中
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				//准备结束 拦截还有处理的bean工厂
+				//注册工厂到后置处理器中
 				registerBeanPostProcessors(beanFactory);
 				beanPostProcess.end();
 
 				// Initialize message source for this context.
+				// 为容器初始化消息源
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
+				// 为容器初始化事件多播器
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
+				//在容器中初始化其他特殊的bean及子类
 				onRefresh();
 
 				// Check for listener beans and register them.
+				// 注册监听器并注册
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
+				// 实例化 所有 非懒加载的bean实例
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
+				// 最后刷新环境
 				finishRefresh();
 			}
 
@@ -602,9 +629,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				}
 
 				// Destroy already created singletons to avoid dangling resources.
+				//销毁创建失败的bean
 				destroyBeans();
 
 				// Reset 'active' flag.
+				// 重新设置激活标志位
 				cancelRefresh(ex);
 
 				// Propagate exception to caller.
@@ -614,6 +643,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			finally {
 				// Reset common introspection caches in Spring's core, since we
 				// might not ever need metadata for singleton beans anymore...
+				// 重新设置 bean缓存 （或者不需要了）
 				resetCommonCaches();
 				contextRefresh.end();
 			}
@@ -627,6 +657,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	protected void prepareRefresh() {
 		// Switch to active.
 		this.startupDate = System.currentTimeMillis();
+		//设置原子boolean状态位
 		this.closed.set(false);
 		this.active.set(true);
 
@@ -640,10 +671,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Initialize any placeholder property sources in the context environment.
+		//初始化资源
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable:
 		// see ConfigurablePropertyResolver#setRequiredProperties
+		//获取环境属性 并且 校验必需的环境属性
 		getEnvironment().validateRequiredProperties();
 
 		// Store pre-refresh ApplicationListeners...

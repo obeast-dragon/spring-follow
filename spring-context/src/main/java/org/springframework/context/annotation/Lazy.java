@@ -60,8 +60,21 @@ import java.lang.annotation.Target;
  * @see Bean
  * @see Configuration
  * @see org.springframework.stereotype.Component
+ *
+ * 用来指定一个bean在创建的时候是否使用延迟创建的方式
  */
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.FIELD})
+@Target({
+		// 标注在类上
+		ElementType.TYPE,
+		// 标注在方法上
+		ElementType.METHOD,
+		// 标注在构造函数上
+		ElementType.CONSTRUCTOR,
+		// 标注在参数上
+		ElementType.PARAMETER,
+		// 标注在成员变量上
+		ElementType.FIELD
+})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Lazy {

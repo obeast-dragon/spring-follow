@@ -55,8 +55,10 @@ import org.springframework.util.Assert;
  */
 public class AnnotationConfigApplicationContext extends GenericApplicationContext implements AnnotationConfigRegistry {
 
+	/* 从注解中读取到的BeanDefinition*/
 	private final AnnotatedBeanDefinitionReader reader;
 
+	/* 定义路径扫描的BeanDefinition*/
 	private final ClassPathBeanDefinitionScanner scanner;
 
 
@@ -65,9 +67,16 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
 	 */
 	public AnnotationConfigApplicationContext() {
+		/*
+			调用祖父AbstractApplicationContext的getApplicationStartup()来收集数据
+			单例的
+		 */
 		StartupStep createAnnotatedBeanDefReader = this.getApplicationStartup().start("spring.context.annotated-bean-reader.create");
+
+		/** AnnotatedBeanDefinitionReader 初始化注解解析器 */
 		this.reader = new AnnotatedBeanDefinitionReader(this);
 		createAnnotatedBeanDefReader.end();
+		/** ClassPathBeanDefinitionScanner 初始化路径扫描解析器*/
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 
@@ -163,8 +172,12 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	@Override
 	public void register(Class<?>... componentClasses) {
 		Assert.notEmpty(componentClasses, "At least one component class must be specified");
+
+		//记录注册的类
 		StartupStep registerComponentClass = this.getApplicationStartup().start("spring.context.component-classes.register")
 				.tag("classes", () -> Arrays.toString(componentClasses));
+
+		//注册class
 		this.reader.register(componentClasses);
 		registerComponentClass.end();
 	}

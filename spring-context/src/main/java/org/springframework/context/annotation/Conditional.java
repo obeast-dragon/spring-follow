@@ -55,6 +55,10 @@ import java.lang.annotation.Target;
  * @author Sam Brannen
  * @since 4.0
  * @see Condition
+ *
+ * 该注解是用来完成bean的按需创建功能的。
+ * 通常标注在某个配置类或者配置类中的某个具体方法上，然后指定一个Conditional条件，在创建bean之前，会先去执行这个条件判断的代码，运行完成之后，
+ * 会返回一个boolean值，只有条件逻辑执行完成返回true时，对应的Bean实例才会被创建。
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -64,6 +68,7 @@ public @interface Conditional {
 	/**
 	 * All {@link Condition} classes that must {@linkplain Condition#matches match}
 	 * in order for the component to be registered.
+	 * 指定注入bean时使用的条件类，这个类需要自定义，并且实现Condition接口
 	 */
 	Class<? extends Condition>[] value();
 
