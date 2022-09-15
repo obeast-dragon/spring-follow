@@ -20,7 +20,11 @@ dependencies {
     implementation("org.aspectj:aspectjweaver:1.9.9.1")
 //    @Resource
     implementation("javax.annotation:javax.annotation-api:1.3.2")
+    //cglib
     implementation("cglib:cglib:3.3.0")
+    // https://mvnrepository.com/artifact/cn.hutool/hutool-all
+    implementation("cn.hutool:hutool-all:5.8.6")
+
 
 
 }
